@@ -76,7 +76,7 @@ with st.sidebar:
                              placeholder="Location: USA/UK\nMajor: Mechanical Engineering")
     
     budget = st.selectbox(" Yearly Budget Constraint", 
-                      [ "Low (< $20k)","Medium ($20k - $50k)","High(above $50k)" "Full Scholarship Needed"])
+                      [ "Low (< $20k)","Medium ($20k - $50k)","High(above $50k)"])
     
     st.markdown("---")
     submit_btn = st.button("Generate Strategy Plan")
