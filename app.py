@@ -13,6 +13,6 @@ else:
     model = genai.GenerativeModel('gemini-2.5-flash')
     try:
         response = model.generate_content("How are you?")
-        print(response)
+        print(response.text)
     except Exception as e:
         print(e)
