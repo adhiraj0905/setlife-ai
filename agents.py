@@ -124,21 +124,83 @@ class UniversityAgent:
             return json.loads(clean_text)
         except Exception as e:
             return {"error": f"Failed to recommend universities: {str(e)}"}
+        
+# ===========================
+# AGENT 3: STRATEGIC PLANNER (PRO VERSION)
+# ===========================
+class ActionPlanAgent:
+    def __init__(self):
+        self.model = genai.GenerativeModel(MODEL_NAME)
+
+    def generate_plan(self, profile, uni_recommendations):
+        print("... Action Plan Agent is strategizing ...")
+        
+        # logical check for urgency
+        grade = profile.get('grade', 11) # default to 11 if missing
+        time_horizon = "Urgent (Less than 1 year)" if grade >= 12 else "Strategic (1-2 years)"
+
+        prompt = f"""
+        You are a ruthless but supportive college admissions strategist.
+        Create a high-stakes action plan for this student.
+        
+        CONTEXT:
+        - Current Grade: {grade} ({time_horizon})
+        - Profile: {json.dumps(profile)}
+        - Goal Universities: {json.dumps([u['name'] for u in uni_recommendations.get('reach', [])])}
+        
+        YOUR MISSION:
+        1. Identify the "Gap": What is missing between their current profile and their Reach schools?
+        2. Create a "Spike": Suggest 1 specific, high-impact project that aligns with their interests (not generic advice).
+        3. Build the Timeline: Specific actions for the next few months.
+
+        Return ONLY a JSON object with this structure:
+        {{
+            "gap_analysis": "2-3 sentences explaining what is missing (e.g., 'Low SAT score' or 'No leadership').",
+            "the_spike": {{
+                "title": "Name of the unique project",
+                "description": "What they should actually build/do."
+            }},
+            "exam_strategy": ["Which exams to take and when"],
+            "timeline": [
+                {{ "period": "Month 1-2", "focus": "...", "action_items": ["item 1", "item 2"] }},
+                {{ "period": "Month 3-6", "focus": "...", "action_items": ["item 1", "item 2"] }}
+            ]
+        }}
+        """
+        
+        try:
+            response = self.model.generate_content(prompt)
+            clean_text = response.text.strip()
+            if clean_text.startswith("```json"): clean_text = clean_text[7:-3]
+            elif clean_text.startswith("```"): clean_text = clean_text[3:-3]
+            return json.loads(clean_text)
+        except Exception as e:
+            return {"error": f"Failed to generate plan: {str(e)}"}
 
 # --- Quick Test Block ---
+# ===========================
+# TEST BLOCK (Run this file to test the full chain)
+# ===========================
 if __name__ == "__main__":
-    # 1. Test Profile Agent
+    print("\n--- 🚀 STARTING CLARITY AI CHAIN ---\n")
+
+    # 1. Profile Agent
     profile_agent = ProfileAgent()
-    user_input = "I have really good grades, straight As. I want to study CS in the USA but money is no object."
-    print(f"\n📝 INPUT: {user_input}\n")
+    user_input = "I am a grade 11 student in India. I love AI and robotics. I have won a few hackathons. I want to apply to top tech schools in the US, but I need financial aid."
+    print(f"📝 USER INPUT: {user_input}\n")
     
     profile = profile_agent.analyze(user_input)
-    print("✅ Extracted Profile:")
-    print(json.dumps(profile, indent=2))
-    
-    # 2. Test University Agent (Uses the profile we just extracted)
+    print("✅ STEP 1: Profile Extracted")
+    # print(json.dumps(profile, indent=2)) # Commented out to keep output clean
+
+    # 2. University Agent (Takes Profile)
     uni_agent = UniversityAgent()
-    recommendations = uni_agent.recommend(profile)
-    
-    print("\n✅ University Recommendations:")
-    print(json.dumps(recommendations, indent=2))
+    unis = uni_agent.recommend(profile)
+    print("\n✅ STEP 2: Universities Recommended")
+    print(json.dumps(unis, indent=2))
+
+    # 3. Action Plan Agent (Takes Profile + Unis)
+    plan_agent = ActionPlanAgent()
+    plan = plan_agent.generate_plan(profile, unis)
+    print("\n✅ STEP 3: Action Plan Generated")
+    print(json.dumps(plan, indent=2))
