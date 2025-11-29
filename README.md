@@ -89,9 +89,5 @@ Want to run this locally? Follow these steps:
 
 Contributions are welcome\! Please fork the repository and submit a pull request for any enhancements (e.g., adding more universities to the database or integrating a PDF resume parser).
 
------
 
-**Built by Adhiraj** | *CS Undergrad & AI Enthusiast*
-
-```
 ```
