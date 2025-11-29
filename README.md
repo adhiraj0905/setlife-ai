@@ -22,7 +22,7 @@ graph TD
     User["User Inputs"] -->|Unstructured Text| Agent1["🕵️ Profile Agent"]
     Agent1 -->|Structured JSON| Agent2["🏫 University Agent"]
     
-    Agent2 -->|University List| Agent3
+    Agent2 -->|University List| Agent3[" Action Plan Agent"]
     Agent3 -->|Gap Analysis & Roadmap| UI["Streamlit Dashboard"]
 ```
 
