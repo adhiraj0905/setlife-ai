@@ -13,9 +13,6 @@
 
 ---
 
-## 🧠 System Architecture
-
-This project moves beyond simple "chatbots" by implementing a **Sequential Multi-Agent Pipeline**. Each agent has a specific role, distinct prompt engineering context, and structured JSON output enforcement.
 
 ```mermaid
 graph TD
